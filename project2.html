@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poisson Distribution Calculator</title>
+</head>
+<body>
+
+<h2>Poisson Distribution Calculator</h2>
+
+<form id="poissonForm">
+  <label for="lambda">Tasa media de éxito (lambda): </label>
+  <input type="number" id="lambda" name="lambda" required><br><br>
+  
+  <label for="x">Número de casos exitosos (x): </label>
+  <input type="number" id="x" name="x" required><br><br>
+  
+  <label for="tipo">Seleccione el tipo de distribución:</label>
+  <select id="tipo" name="tipo">
+    <option value="1">P(X=x)</option>
+    <option value="2">P(X&lt;x)</option>
+    <option value="3">P(X≤x)</option>
+    <option value="4">P(X&gt;x)</option>
+    <option value="5">P(X≥x)</option>
+    <option value="6">P(a&lt;X&lt;b)</option>
+    <option value="7">P(a≤X≤b)</option>
+  </select><br><br>
+  
+  <div id="intervalInputs" style="display: none;">
+    <label for="x2">Segundo valor de casos exitosos (x2): </label>
+    <input type="number" id="x2" name="x2"><br><br>
+  </div>
+  
+  <button type="submit">Calcular</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+document.getElementById("tipo").addEventListener("change", function() {
+  var tipo = this.value;
+  var intervalInputs = document.getElementById("intervalInputs");
+  if (tipo == 6 || tipo == 7) {
+    intervalInputs.style.display = "block";
+  } else {
+    intervalInputs.style.display = "none";
+  }
+});
+
+document.getElementById("poissonForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+  
+  var lambda = parseFloat(document.getElementById("lambda").value);
+  var x = parseInt(document.getElementById("x").value);
+  var tipo = parseInt(document.getElementById("tipo").value);
+  var x2 = parseFloat(document.getElementById("x2").value);
+  
+  var resultado;
+  
+  if (tipo == 1) {
+    resultado = Math.exp(-lambda) * (Math.pow(lambda, x) / factorial(x));
+  } else if (tipo == 2) {
+    resultado = 0;
+    for (var i = 0; i < x; i++) {
+      resultado += Math.exp(-lambda) * (Math.pow(lambda, i) / factorial(i));
+    }
+  } else if (tipo == 3 || tipo == 4 || tipo == 5) {
+    resultado = 0;
+    for (var i = 0; i <= x; i++) {
+      resultado += Math.exp(-lambda) * (Math.pow(lambda, i) / factorial(i));
+    }
+    if (tipo == 4 || tipo == 5) {
+      resultado = 1 - resultado;
+    }
+  } else if (tipo == 6 || tipo == 7) {
+    var resultado_grande = 0;
+    var resultado_pequeño = 0;
+    var start = Math.min(x, x2);
+    var end = Math.max(x, x2);
+    for (var i = 0; i <= end; i++) {
+      if (i < start) {
+        resultado_pequeño += Math.exp(-lambda) * (Math.pow(lambda, i) / factorial(i));
+      } else {
+        resultado_grande += Math.exp(-lambda) * (Math.pow(lambda, i) / factorial(i));
+      }
+    }
+    resultado = resultado_grande - resultado_pequeño;
+  }
+  
+  document.getElementById("result").innerHTML = "Resultado: " + resultado.toFixed(6);
+});
+
+function factorial(n) {
+  if (n === 0 || n === 1)
+    return 1;
+  for (var i = n - 1; i >= 1; i--) {
+    n *= i;
+  }
+  return n;
+}
+</script>
+
+</body>
+</html>
