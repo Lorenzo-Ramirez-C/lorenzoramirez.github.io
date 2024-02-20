@@ -1,90 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Binomial Distribution Calculator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binomial Distribution Calculator</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
 </head>
 <body>
-<h1>Binomial Distribution Calculator</h1>
-<form id="binomialForm">
-  <label for="n">Number of trials (n):</label>
-  <input type="number" id="n" name="n" required><br>
-  
-  <label for="p">Probability of success (p):</label>
-  <input type="number" step="0.01" id="p" name="p" required><br>
-  
-  <label for="x1">First value of successful cases (x1):</label>
-  <input type="number" id="x1" name="x1" required><br>
-  
-  <label for="tipo">Select the distribution type:</label>
-  <select id="tipo" name="tipo" required>
-    <option value="1">P(X=x)</option>
-    <option value="2">P(X&lt;x)</option>
-    <option value="3">P(X≤x)</option>
-    <option value="4">P(X&gt;x)</option>
-    <option value="5">P(X≥x)</option>
-    <option value="6">P(a&lt;X&lt;b)</option>
-    <option value="7">P(a≤X≤b)</option>
-  </select><br>
-  
-  <div id="secondValue" style="display: none;">
-    <label for="x2">Second value of successful cases (x2):</label>
-    <input type="number" id="x2" name="x2"><br>
-  </div>
-  
-  <button type="submit">Calculate</button>
-</form>
+    <h1>Binomial Distribution Calculator</h1>
+    <label for="tipo">Select the type of distribution:</label>
+    <select id="tipo">
+        <option value="1">P(X=x)</option>
+        <option value="2">P(X&lt;x)</option>
+        <option value="3">P(X&#8804;x)</option>
+        <option value="4">P(X&gt;x)</option>
+        <option value="5">P(X&#8805;x)</option>
+        <option value="6">P(a&lt;X&lt;b)</option>
+        <option value="7">P(a&#8804;X&#8804;b)</option>
+    </select>
+    <br>
+    <div id="inputs"></div>
+    <button onclick="calculate()">Calculate</button>
+    <div id="result"></div>
 
-<div id="result"></div>
+    <script>
+        function product_Range(a, b) {
+            var prd = a;
+            var i = a;
+            while (i++ < b) {
+                prd *= i;
+            }
+            return prd;
+        }
 
-<script>
-document.getElementById('tipo').addEventListener('change', function() {
-  var tipo = this.value;
-  if (tipo == 6 || tipo == 7) {
-    document.getElementById('secondValue').style.display = 'block';
-  } else {
-    document.getElementById('secondValue').style.display = 'none';
-  }
-});
+        function combinations(n, r) {
+            if (n == r || r == 0) {
+                return 1;
+            } else {
+                r = (r < n - r) ? n - r : r;
+                return product_Range(r + 1, n) / product_Range(1, n - r);
+            }
+        }
 
-document.getElementById('binomialForm').addEventListener('submit', function(event) {
-  event.preventDefault();
-  var n = parseInt(document.getElementById('n').value);
-  var p = parseFloat(document.getElementById('p').value);
-  var x1 = parseInt(document.getElementById('x1').value);
-  var tipo = parseInt(document.getElementById('tipo').value);
-  var x2 = null;
-  if (tipo == 6 || tipo == 7) {
-    x2 = parseInt(document.getElementById('x2').value);
-  }
-  
-  var resultado = document.getElementById('result');
-  resultado.innerHTML = '';
+        function createInputs() {
+            var tipo = document.getElementById("tipo").value;
+            var inputsDiv = document.getElementById("inputs");
+            inputsDiv.innerHTML = "";
+            var inputHTML = "";
+            if (tipo >= 1 && tipo <= 5) {
+                inputHTML += '<label for="n">Number of trials (n):</label>';
+                inputHTML += '<input type="number" id="n"><br>';
+                inputHTML += '<label for="p">Probability of success (p):</label>';
+                inputHTML += '<input type="number" id="p"><br>';
+                inputHTML += '<label for="x">Number of successful outcomes (x):</label>';
+                inputHTML += '<input type="number" id="x"><br>';
+            } else if (tipo >= 6 && tipo <= 7) {
+                inputHTML += '<label for="n">Number of trials (n):</label>';
+                inputHTML += '<input type="number" id="n"><br>';
+                inputHTML += '<label for="p">Probability of success (p):</label>';
+                inputHTML += '<input type="number" id="p"><br>';
+                inputHTML += '<label for="x1">First value of x (a):</label>';
+                inputHTML += '<input type="number" id="x1"><br>';
+                inputHTML += '<label for="x2">Second value of x (b):</label>';
+                inputHTML += '<input type="number" id="x2"><br>';
+            }
+            inputsDiv.innerHTML = inputHTML;
+        }
 
-  // Perform calculations
-  var resultadoValue = null;
-  if (tipo == 1) {
-    resultadoValue = (comb(n, x1) * Math.pow(p, x1) * Math.pow((1 - p), (n - x1)));
-    resultado.innerHTML = `P(X=${x1}) = ${resultadoValue}`;
-  } else if (tipo == 2) {
-    // Perform other calculations similarly
-  }
+        function calculate() {
+            var tipo = document.getElementById("tipo").value;
+            var resultDiv = document.getElementById("result");
+            var result = 0;
+            var n = parseFloat(document.getElementById("n").value);
+            var p = parseFloat(document.getElementById("p").value);
+            var x = parseFloat(document.getElementById("x").value);
+            var x1 = parseFloat(document.getElementById("x1").value);
+            var x2 = parseFloat(document.getElementById("x2").value);
 
-});
+            if (tipo == 1) {
+                result = (combinations(n, x) * (p ** x) * ((1 - p) ** (n - x)));
+            } else if (tipo == 2) {
+                for (var i = 0; i < x; i++) {
+                    result += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                }
+            } else if (tipo == 3) {
+                for (var i = 0; i <= x; i++) {
+                    result += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                }
+            } else if (tipo == 4) {
+                var totalResult = 0;
+                var invalidResult = 0;
+                for (var i = 0; i <= n; i++) {
+                    totalResult += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                }
+                for (var i = 0; i <= x; i++) {
+                    invalidResult += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                }
+                result = totalResult - invalidResult;
+            } else if (tipo == 5) {
+                var totalResult = 0;
+                var invalidResult = 0;
+                for (var i = 0; i <= n; i++) {
+                    totalResult += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                }
+                for (var i = 0; i < x; i++) {
+                    invalidResult += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                }
+                result = totalResult - invalidResult;
+            } else if (tipo == 6) {
+                var resultLarge = 0;
+                var resultSmall = 0;
+                if (x2 > x1) {
+                    for (var i = 0; i < x2; i++) {
+                        resultLarge += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                    }
+                    for (var i = 0; i <= x1; i++) {
+                        resultSmall += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                    }
+                    result = resultLarge - resultSmall;
+                } else {
+                    for (var i = 0; i < x1; i++) {
+                        resultLarge += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                    }
+                    for (var i = 0; i <= x2; i++) {
+                        resultSmall += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                    }
+                    result = resultLarge - resultSmall;
+                }
+            } else if (tipo == 7) {
+                var resultLarge = 0;
+                var resultSmall = 0;
+                if (x2 > x1) {
+                    for (var i = 0; i <= x2; i++) {
+                        resultLarge += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                    }
+                    for (var i = 0; i < x1; i++) {
+                        resultSmall += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                    }
+                    result = resultLarge - resultSmall;
+                } else {
+                    for (var i = 0; i <= x1; i++) {
+                        resultLarge += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                    }
+                    for (var i = 0; i < x2; i++) {
+                        resultSmall += (combinations(n, i) * (p ** i) * ((1 - p) ** (n - i)));
+                    }
+                    result = resultLarge - resultSmall;
+                }
+            } else {
+                alert("Please select a valid type of distribution.");
+            }
 
-function comb(n, k) {
-  if (k === 0 || k === n) return 1;
-  if (k === 1) return n;
-  if (k > n - k) k = n - k;
-  let result = 1;
-  for (let i = 1; i <= k; i++) {
-    result *= n - k + i;
-    result /= i;
-  }
-  return result;
-}
-</script>
-
+            resultDiv.innerHTML = "Result: " + result;
+        }
+    </script>
 </body>
 </html>
+
