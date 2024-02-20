@@ -89,18 +89,46 @@
                     invalidResult += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
                 }
                 result = totalResult - invalidResult;
-            } else if (tipo === 6 || tipo === 7) {
-                var x1_val = Math.min(x1, x2);
-                var x2_val = Math.max(x1, x2);
+            } else if (tipo === 6) {
                 var resultLarge = 0;
                 var resultSmall = 0;
-                for (var i = 0; i < x2_val; i++) {
-                    resultLarge += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
+                if (x2 > x1) {
+                    for (var i = 0; i < x2; i++) {
+                        resultLarge += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
+                    }
+                    for (var i = 0; i <= x1; i++) {
+                        resultSmall += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
+                    }
+                    result = resultLarge - resultSmall;
+                } else {
+                    for (var i = 0; i < x1; i++) {
+                        resultLarge += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
+                    }
+                    for (var i = 0; i <= x2; i++) {
+                        resultSmall += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
+                    }
+                    result = resultLarge - resultSmall;
                 }
-                for (var i = 0; i <= x1_val; i++) {
-                    resultSmall += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
+            } else if (tipo === 7) {
+                var resultLarge = 0;
+                var resultSmall = 0;
+                if (x2 > x1) {
+                    for (var i = 0; i <= x2; i++) {
+                        resultLarge += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
+                    }
+                    for (var i = 0; i < x1; i++) {
+                        resultSmall += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
+                    }
+                    result = resultLarge - resultSmall;
+                } else {
+                    for (var i = 0; i <= x1; i++) {
+                        resultLarge += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
+                    }
+                    for (var i = 0; i < x2; i++) {
+                        resultSmall += combinations(n, i) * Math.pow(p, i) * Math.pow((1 - p), (n - i));
+                    }
+                    result = resultLarge - resultSmall;
                 }
-                result = resultLarge - resultSmall;
             } else {
                 alert("Please select a valid type of distribution.");
             }
