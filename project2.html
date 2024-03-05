@@ -4,7 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Probability Calculation</title>
-    <script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Probability Calculation</h1>
+        <div class="input-group">
+            <label for="lambda">Tasa media de éxito (lambda):</label>
+            <input type="number" id="lambda" min="0" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="x">Número de casos exitosos (x):</label>
+            <input type="number" id="x" min="0">
+        </div>
+        <div class="input-group">
+            <label for="tipo">Tipo de distribución:</label>
+            <select id="tipo">
+                <option value="1">P(X=x)</option>
+                <option value="2">P(X&lt;x)</option>
+                <option value="3">P(X≤x)</option>
+                <option value="4">P(X&gt;x)</option>
+                <option value="5">P(X≥x)</option>
+                <option value="6">P(a&lt;X&lt;b)</option>
+                <option value="7">P(a≤X≤b)</option>
+            </select>
+        </div>
+        <div class="input-group" id="secondXGroup" style="display: none;">
+            <label for="x2">Segundo valor de casos exitosos (x2):</label>
+            <input type="number" id="x2" min="0">
+        </div>
+        <button onclick="calculateProbability()">Calcular Probabilidad</button>
+    </div>
+
+   <script>
         function calculateProbability() {
             var lamb = parseFloat(prompt('Inserte la tasa media de éxito (lambda): '));
             var x1 = parseInt(prompt('Inserte el número de casos exitosos que quiere calcular (x): '));
@@ -99,10 +179,9 @@
                 return 1;
             else
                 return n * factorial(n - 1);
+
+
         }
     </script>
-</head>
-<body>
-    <button onclick="calculateProbability()">Calculate Probability</button>
 </body>
 </html>
